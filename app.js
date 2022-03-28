@@ -2,7 +2,7 @@ const puzzelBoard = document.querySelector('#puzzle');
 const solveButton = document.querySelector('#solve-button');
 const solutionDisplay = document.querySelector('#solution');
 const squares = 81;
-const submission = [];
+let submission = [];
 
 for (let i = 0; i < squares; i++) {
   const inputElement = document.createElement('input');
@@ -43,14 +43,14 @@ const populateValues = (isSolvable, solution) => {
     });
     solutionDisplay.innerHTML = 'This is the answer';
   } else {
-    solutionDisplay.innerHTML('This is not solvable');
+    solutionDisplay.innerHTML = 'This is not solvable';
   }
 };
 
 const solve = () => {
   joinValues();
   const data = { numbers: submission.join('') };
-  console.log('data', data);
+  console.log(('data', data));
 
   fetch('http://localhost:8000/solve', {
     method: 'POST',
@@ -61,9 +61,13 @@ const solve = () => {
     body: JSON.stringify(data),
   })
     .then((response) => response.json())
-    .then((data) => console.log(data))
+    .then((data) => {
+      console.log(data);
+      populateValues(data.solvable, data.solution);
+      submission = [];
+    })
     .catch((error) => {
-      console.error('Error: ', error);
+      console.error('Error:', error);
     });
 };
 
